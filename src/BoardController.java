@@ -6,8 +6,7 @@ import java.util.Random;
  */
 public class BoardController
 {
-    public Board previousBoard;
-    public Board gameBoard;
+    private Board gameBoard;
     private int userMoves;
     private boolean boardChanged;
 
@@ -18,24 +17,41 @@ public class BoardController
         boardChanged = false;
     }
 
-    public void moveTileLeft( Tile current )
+    public void moveTileLeft( int x, int y )
     {
-
+        swapTile( x, y, x - 1, y );
     }
 
-    public void moveTileRight( Tile current )
+    public void moveTileRight( int x, int y )
     {
-
+        swapTile( x, y,  x + 1, y );
     }
 
-    public void moveTileUp( Tile current )
+    public void moveTileUp( int x, int y )
     {
-
+        swapTile( x, y, x, y + 1 );
     }
 
-    public void moveTileDown( Tile current )
+    public void moveTileDown( int x, int y )
     {
+        swapTile( x, y, x, y - 1 );
+    }
 
+    /**
+     * Swap two tile's positions (values)
+     * @param x1 current tile's x coordinate
+     * @param y1 current tile's y coordinate
+     * @param x2 target tile's x coordinate
+     * @param y2 target tile's y coordinate
+     */
+    private void swapTile( int x1, int y1, int x2, int y2 )
+    {
+        Tile current = gameBoard.getTile(x1, y1);
+        Tile swap = gameBoard.getTile(x2, y2);
+
+        int temp = current.getValue();
+        current.setValue(swap.getValue());
+        swap.setValue(temp);
     }
 
     /**
@@ -50,12 +66,10 @@ public class BoardController
      * @param x tile's x coordinate
      * @param y tile's y coordinate
      */
-
     public void tileClicked( int x, int y )
     {
-        Tile current = gameBoard.getTile(x, y);
 
-        TileMovement movement = canMove(current);
+        TileMovement movement = canMove( x, y);
 
         if( movement == TileMovement.NULL )
             return;
@@ -63,16 +77,16 @@ public class BoardController
         switch (movement)
         {
             case DOWN:
-                moveTileDown(current);
+                moveTileDown(x, y);
                 break;
             case UP:
-                moveTileUp(current);
+                moveTileUp(x, y);
                 break;
             case LEFT:
-                moveTileLeft(current);
+                moveTileLeft(x, y);
                 break;
             case RIGHT:
-                moveTileRight(current);
+                moveTileRight(x, y);
                 break;
         }
 
@@ -83,12 +97,27 @@ public class BoardController
     /**
      * Check if a tile can move to the empty space.
      *
-     * @param current the tile clicked
+     * @param x the tile x coordinate
+     * @param y the tile y coordinate
      * @return the direction that can be moved, null otherwise
      */
-    public TileMovement canMove(Tile current)
+    public TileMovement canMove(int x, int y)
     {
-        return TileMovement.NULL;
+
+        if(gameBoard.getTile(x + 1, y).getValue() == -1)
+            return TileMovement.RIGHT;
+
+        else if(gameBoard.getTile(x - 1, y).getValue() == -1)
+            return TileMovement.LEFT;
+
+        else if(gameBoard.getTile(x, y - 1).getValue() == -1)
+            return TileMovement.UP;
+
+        else if(gameBoard.getTile(x, y + 1).getValue() == -1)
+            return TileMovement.DOWN;
+
+        else
+            return TileMovement.NULL;
     }
 
 
@@ -111,23 +140,17 @@ public class BoardController
             for(int j = 0; j < 4; j++)
             {
                 if(previousTile == null)
-                {
                     previousTile = tiles[i][j];
-                }
 
                 else if(tiles[i][j].getValue() > previousTile.getValue())
-                {
                     previousTile = tiles[i][j];
-                }
 
                 else
-                {
                     return false;
-                }
             }
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -138,19 +161,22 @@ public class BoardController
 
     }
 
+
+    /**
+     * Generate a new game board and scramble it.
+     */
     public void scrambleBoard()
     {
-        Tile[][] tiles = new Tile[4][4];
-
+        Tile[][] tiles = gameBoard.getTiles();
         Random generator = new Random();
 
         ArrayList<Integer> numbersTaken = new ArrayList<Integer>(); // List of the numbers that have already been set in the Tile's
 
         int num; // Temporary variable to store random numbers
 
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < tiles.length; i++)
         {
-            for(int j = 0; j < 4; j++)
+            for(int j = 0; j < tiles[0].length; j++)
             {
                 do { num = generator.nextInt(16) + 1; } while(numbersTaken.contains(num)); // Generate random numbers (0 inclusive, 15 exclusive) while they are already used.
 
@@ -163,7 +189,6 @@ public class BoardController
             }
         }
 
-        gameBoard.setTiles(tiles); // Set the board's tiles
         setBoardChanged(true); // Flag the view for an update
     }
 
@@ -179,9 +204,17 @@ public class BoardController
      * Set if the board has been changed. Usually only used to indicate
      * that the board view has been updated.
      */
-
     public void setBoardChanged(boolean boardChanged)
     {
         this.boardChanged = boardChanged;
+    }
+
+    /**
+     * Get the number of valid user moves in the current board
+     * @return number of user moves
+     */
+    public int getUserMoves()
+    {
+        return userMoves;
     }
 }
