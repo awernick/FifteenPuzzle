@@ -5,13 +5,18 @@ public class Board
 {
     private Tile[][] tiles;
 
-    public void getTiles()
+    public Tile[][] getTiles()
     {
-
+        return tiles;
     }
 
     public Tile getTile(int x, int y)
     {
         return tiles[x][y];
+    }
+
+    public void setTiles(Tile[][] tiles)
+    {
+        this.tiles = tiles;
     }
 }

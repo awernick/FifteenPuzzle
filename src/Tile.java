@@ -3,9 +3,20 @@
  */
 public class Tile
 {
-    private int x;
-    private int y;
     private int value;
 
+    public Tile(int value)
+    {
+        this.value = value;
+    }
 
+    public void setValue(int value)
+    {
+        this.value = value;
+    }
+
+    public int getValue()
+    {
+        return value;
+    }
 }
