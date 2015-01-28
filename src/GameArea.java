@@ -32,14 +32,20 @@ public class GameArea extends JApplet
 		{9,10,11,12},
 		{13,14,15,16}};
     
-
+    
     public GameArea()
     {
     	this.initGui();    	
     }
     
+    /**
+     * No purpose as of 1/28/2015
+     * */
     public void init(){}
     
+    /**
+     * Initializes main Pane and adds the control pane together with the board
+     * */
     private void initGui()
     {
     	//Initialize Components
@@ -56,11 +62,21 @@ public class GameArea extends JApplet
     	
     	//Add Panel to main component
     	this.setLayout(gLayout);
-    	this.add(controlPanel,BorderLayout.NORTH);
+    	this.add(controlPanel,BorderLayout.SOUTH);
     	this.add(new JSeparator(), BorderLayout.CENTER);
-    	this.add(refreshTiles(tiles), BorderLayout.PAGE_END);
+    	this.add(refreshTiles(tiles), BorderLayout.BEFORE_LINE_BEGINS);
+    	this.setPreferredSize(getPreferredSize());
     }
     
+    
+    /** 
+	 * 
+	 * Method makes buttons depending on the parameter passed and builds a JPanel 
+	 * component out of the parameter then returns it.
+	 * 
+	 * @param tiles 2-D array with Tile objects
+	 * @return JPanel containing the board representation according to the current board
+	 * */
     public JPanel refreshTiles(int[][] tiles)
 	{
 		gameBoard = new JPanel(new GridLayout(4,4,1,1));
