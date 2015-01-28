@@ -13,25 +13,51 @@ public class BoardController
     public BoardController()
     {
         gameBoard = new Board();
+        scrambleBoard();
+
         userMoves = 0;
         boardChanged = false;
     }
 
+    /**
+     * Slide a tile to the left
+     *
+     * @param x clicked tile's x coordinate
+     * @param y clicked tile's y coordinate
+     */
     public void moveTileLeft( int x, int y )
     {
         swapTile( x, y, x - 1, y );
     }
 
+    /**
+     * Slide a tile to the right
+     *
+     * @param x clicked tile's x coordinate
+     * @param y clicked tile's y coordinate
+     */
     public void moveTileRight( int x, int y )
     {
         swapTile( x, y,  x + 1, y );
     }
 
+    /**
+     * Slide a tile to the up
+     *
+     * @param x clicked tile's x coordinate
+     * @param y clicked tile's y coordinate
+     */
     public void moveTileUp( int x, int y )
     {
         swapTile( x, y, x, y + 1 );
     }
 
+    /**
+     * Slide a tile to the down
+     *
+     * @param x clicked tile's x coordinate
+     * @param y clicked tile's y coordinate
+     */
     public void moveTileDown( int x, int y )
     {
         swapTile( x, y, x, y - 1 );
@@ -39,6 +65,7 @@ public class BoardController
 
     /**
      * Swap two tile's positions (values)
+     *
      * @param x1 current tile's x coordinate
      * @param y1 current tile's y coordinate
      * @param x2 target tile's x coordinate
@@ -95,11 +122,13 @@ public class BoardController
     }
 
     /**
-     * Check if a tile can move to the empty space.
+     * Check if a tile has an adjacent empty space to move to.
      *
      * @param x the tile x coordinate
      * @param y the tile y coordinate
-     * @return the direction that can be moved, null otherwise
+     *
+     * @return the direction that the tile can be moved to,
+     * null otherwise
      */
     public TileMovement canMove(int x, int y)
     {
@@ -205,16 +234,21 @@ public class BoardController
      * that the board view has been updated.
      */
     public void setBoardChanged(boolean boardChanged)
-    {
-        this.boardChanged = boardChanged;
-    }
+    { this.boardChanged = boardChanged; }
 
     /**
      * Get the number of valid user moves in the current board
+     *
      * @return number of user moves
      */
     public int getUserMoves()
-    {
-        return userMoves;
-    }
+    { return userMoves; }
+
+    /**
+     * Return the current board's tiles.
+     *
+     * @return gameboard's tiles.
+     */
+    public Tile[][] getBoard()
+    { return gameBoard.getTiles().clone(); }
 }
