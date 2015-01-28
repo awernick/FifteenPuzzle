@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Random;
+
 /**
  * Created by awernick on 1/27/15.
  */
@@ -88,15 +91,6 @@ public class BoardController
         return TileMovement.NULL;
     }
 
-    /**
-     * Validate the movement before updating the board
-     *
-     * @return true if valid movement, false otherwise
-     */
-    public boolean validMovement()
-    {
-        return false;
-    }
 
     /**
      * Check if the current board configuration is solved.
@@ -144,6 +138,35 @@ public class BoardController
 
     }
 
+    public void scrambleBoard()
+    {
+        Tile[][] tiles = new Tile[4][4];
+
+        Random generator = new Random();
+
+        ArrayList<Integer> numbersTaken = new ArrayList<Integer>(); // List of the numbers that have already been set in the Tile's
+
+        int num; // Temporary variable to store random numbers
+
+        for(int i = 0; i < 4; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                do { num = generator.nextInt(16) + 1; } while(numbersTaken.contains(num)); // Generate random numbers (0 inclusive, 15 exclusive) while they are already used.
+
+                if(num == 16)
+                    tiles[i][j].setValue(-1); // Generate the blank puzzle piece if the current rand number is 16
+                else
+                    tiles[i][j].setValue(num); // Set the current tile's value to the random number
+
+                numbersTaken.add(num); // Add to the list of numbers taken
+            }
+        }
+
+        gameBoard.setTiles(tiles); // Set the board's tiles
+        setBoardChanged(true); // Flag the view for an update
+    }
+
     /**
      * Signal the view to update if the board has changed.
      *
@@ -157,7 +180,7 @@ public class BoardController
      * that the board view has been updated.
      */
 
-    public boolean setBoardChanged(boolean boardChanged)
+    public void setBoardChanged(boolean boardChanged)
     {
         this.boardChanged = boardChanged;
     }
