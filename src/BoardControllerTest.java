@@ -15,7 +15,6 @@ public class BoardControllerTest
 
     @org.junit.Test
     public void testMoveTileLeft() throws Exception {
-        Assert.assertEquals("");
     }
 
     @org.junit.Test
