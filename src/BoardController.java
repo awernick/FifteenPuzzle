@@ -49,7 +49,7 @@ public class BoardController
      */
     public void moveTileUp( int x, int y )
     {
-        swapTile( x, y, x, y + 1 );
+        swapTile( x, y, x, y - 1 );
     }
 
     /**
@@ -60,7 +60,7 @@ public class BoardController
      */
     public void moveTileDown( int x, int y )
     {
-        swapTile( x, y, x, y - 1 );
+        swapTile( x, y, x, y + 1 );
     }
 
     /**
@@ -133,20 +133,31 @@ public class BoardController
     public TileMovement canMove(int x, int y)
     {
 
-        if(gameBoard.getTile(x + 1, y).getValue() == -1)
+        if(x + 1 < 4 && gameBoard.getTile(x + 1, y).getValue() == -1) {
+            System.out.println("Move right");
             return TileMovement.RIGHT;
+        }
 
-        else if(gameBoard.getTile(x - 1, y).getValue() == -1)
+        else if( x - 1 >= 0 && gameBoard.getTile(x - 1, y).getValue() == -1) {
+            System.out.println("Move left");
             return TileMovement.LEFT;
+        }
 
-        else if(gameBoard.getTile(x, y - 1).getValue() == -1)
-            return TileMovement.UP;
-
-        else if(gameBoard.getTile(x, y + 1).getValue() == -1)
+        else if(y + 1 < 4 && gameBoard.getTile(x, y + 1).getValue() == -1) {
+            System.out.println("Move down");
             return TileMovement.DOWN;
+        }
+
+        else if( y - 1 >= 0 &&  gameBoard.getTile(x, y - 1).getValue() == -1) {
+            System.out.println("Move up");
+            return TileMovement.UP;
+        }
 
         else
+        {
+            System.out.println("Cannot move!");
             return TileMovement.NULL;
+        }
     }
 
 
@@ -193,6 +204,7 @@ public class BoardController
 
     /**
      * Generate a new game board and scramble it.
+     * -1 value set to represent the blank tile.
      */
     public void scrambleBoard()
     {

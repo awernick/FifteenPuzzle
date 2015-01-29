@@ -8,6 +8,10 @@ public class Board
     public Board()
     {
         tiles = new Tile[4][4];
+
+        for(int i = 0; i < tiles.length; i++)
+            for (int j = 0; j < tiles[0].length; j++)
+                tiles[i][j] = new Tile(0);
     }
 
     /**
