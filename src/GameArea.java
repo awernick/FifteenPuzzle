@@ -1,4 +1,6 @@
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
@@ -24,17 +26,13 @@ public class GameArea extends JApplet
     private JButton newGameButton;
     private JButton solveButton;
     private BorderLayout gLayout;
-    
-    //Test Value
-    // ! CHANGE TO FIT THE GAME CONTROLLER !
-    public static int[][] tiles = {{1,2,3,4},
-    	{5,6,7,8},
-		{9,10,11,12},
-		{13,14,15,16}};
+    private static JPanel gameBoard;
     
     
     public GameArea()
     {
+    	BoardController boardController = new BoardController();
+    	boardController.scrambleBoard();
     	this.initGui();    	
     }
     
@@ -64,7 +62,7 @@ public class GameArea extends JApplet
     	this.setLayout(gLayout);
     	this.add(controlPanel,BorderLayout.SOUTH);
     	this.add(new JSeparator(), BorderLayout.CENTER);
-    	this.add(refreshTiles(tiles), BorderLayout.BEFORE_LINE_BEGINS);
+    	this.add(refreshTiles(boardController.getBoard()), BorderLayout.BEFORE_LINE_BEGINS);
     	this.setPreferredSize(getPreferredSize());
     }
     
@@ -77,7 +75,7 @@ public class GameArea extends JApplet
 	 * @param tiles 2-D array with Tile objects
 	 * @return JPanel containing the board representation according to the current board
 	 * */
-    public JPanel refreshTiles(int[][] tiles)
+    public static JPanel refreshTiles(Tile[][] tiles)
 	{
 		gameBoard = new JPanel(new GridLayout(4,4,1,1));
 		JButton currentButton;
@@ -85,9 +83,18 @@ public class GameArea extends JApplet
 		for(int i = 0; i < 4; i++)
 			for(int j = 0; j < 4; j++)
 			{
-				currentButton = new JButton(Integer.toString(tiles[i][j]));
-				currentButton.setPreferredSize(new Dimension(50,50));;
+				if(tiles[i][j].getValue()<0)
+				{
+					currentButton = new JButton();
+					currentButton.setPreferredSize(new Dimension(TILE_WIDTH,TILE_HEIGHT));;
+					currentButton.setBackground(Color.white);
+					gameBoard.add(currentButton);
+				}else{
+				currentButton = new JButton(Integer.toString(tiles[i][j].getValue()));
+				currentButton.setPreferredSize(new Dimension(TILE_WIDTH,TILE_HEIGHT));;
+				currentButton.setBackground(Color.gray);
 				gameBoard.add(currentButton);
+				}
 			}
 		return gameBoard;
 	}
