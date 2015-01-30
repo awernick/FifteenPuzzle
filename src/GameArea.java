@@ -27,13 +27,16 @@ public class GameArea extends JApplet implements MouseListener, Runnable
 	private JPanel controlPanel;
 	private JButton newGameButton;
 	private JButton solveButton;
+	private JLabel moves;
 	private GridBagLayout gLayout;
 	private static JPanel gameBoard;
 	private static JButton[][] boardTiles;
 	
 	public void init()
 	{
+		moves = new JLabel("Moves = " + "0");
 		boardController = new BoardController();
+		printBoard();
 		gameBoard = new JPanel(new GridLayout(4, 4, 0, 0));
 		boardTiles = new JButton[4][4];
 		populateBoard();
@@ -54,7 +57,7 @@ public class GameArea extends JApplet implements MouseListener, Runnable
 	
 	public void printBoard()
 	{
-		System.out.println(gameBoard.toString());
+		System.out.println(boardController.getBoard().toString());
 	}
 	
 	/**
@@ -92,7 +95,7 @@ public class GameArea extends JApplet implements MouseListener, Runnable
 		c.fill = GridBagConstraints.VERTICAL;
 		c.gridx = 0;
 		c.gridy = 2;
-		this.add(new JLabel("Moves = " + boardController.getUserMoves()), c);
+		this.add(moves, c);
 
 		c.fill = GridBagConstraints.VERTICAL;
 		c.anchor = GridBagConstraints.PAGE_END;
@@ -156,6 +159,7 @@ public class GameArea extends JApplet implements MouseListener, Runnable
 	 * */
 	public void refreshTiles()
 	{
+		moves.setText("Moves : " + boardController.getUserMoves());
 		Tile[][] tiles = boardController.getBoard();
 		for(int i = 0; i < 4; i++)
 			for(int j = 0; j < 4; j++)
