@@ -14,7 +14,7 @@ import javax.swing.*;
 /**
  * Created by awernick on 1/27/15.
  */
-public class GameArea extends JApplet implements MouseListener
+public class GameArea extends JApplet implements MouseListener, Runnable
 {
 	//Game Components Instantiation
 	private static BoardController boardController;
@@ -29,19 +29,34 @@ public class GameArea extends JApplet implements MouseListener
 	private JButton solveButton;
 	private GridBagLayout gLayout;
 	private static JPanel gameBoard;
-	private static JButton currentButton;
-
-
-	public GameArea()
+	private static JButton[][] boardTiles;
+	
+	public void init()
 	{
 		boardController = new BoardController();
+		gameBoard = new JPanel(new GridLayout(4, 4, 0, 0));
+		boardTiles = new JButton[4][4];
+		populateBoard();
+		
+		
 		initGui();
 	}
 
-	public void paint()
+	public void start()
 	{
-		initGui();
+		
 	}
+	
+	public void run()
+	{
+		
+	}
+	
+	public void printBoard()
+	{
+		System.out.println(gameBoard.toString());
+	}
+	
 	/**
 	 * Initializes main Pane and adds the control pane together with the board
 	 * */
@@ -89,13 +104,47 @@ public class GameArea extends JApplet implements MouseListener
 		c.gridy = 3;
 
 		c.insets = new Insets(0, 0, 0, 0);
-		gameBoard = refreshTiles(boardController.getBoard());
-		gameBoard.validate();
 		this.add(gameBoard,c);
 		this.setSize(300, 500);
 		
 	}
-
+	
+	public void populateBoard()
+	{
+		for(int i = 0; i < 4; i++)
+			for(int j = 0; j < 4; j++)
+			{
+				boardTiles[i][j] = new JButton();
+				boardTiles[i][j].addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent e)
+					{
+						int xTile = e.getComponent().getX() / TILE_WIDTH;
+						int yTile = e.getComponent().getY() / TILE_HEIGHT;
+						System.out.println("x : " + xTile + " y : " + yTile);
+						boardController.tileClicked(xTile, yTile);
+						refreshTiles();
+					}
+				});
+			}
+				
+		for(int i = 0; i < 4; i++)
+			for(int j = 0; j < 4; j++)
+			{
+				boardTiles[i][j].setPreferredSize(new Dimension(TILE_WIDTH,TILE_HEIGHT));
+				if(boardController.getBoard()[i][j].getValue() > 0)
+				{
+					boardTiles[i][j].setText(Integer.toString(boardController.getBoard()[i][j].getValue()));
+					boardTiles[i][j].setBackground(Color.GRAY);
+				}
+				else
+				{
+					boardTiles[i][j].setBackground(Color.white);
+				}	
+				gameBoard.add(boardTiles[i][j], i,j);
+			}
+			
+	}
+	
 
 	/** 
 	 * 
@@ -105,47 +154,32 @@ public class GameArea extends JApplet implements MouseListener
 	 * @param tiles 2-D array with Tile objects
 	 * @return JPanel containing the board representation according to the current board
 	 * */
-	public static JPanel refreshTiles(Tile[][] tiles)
+	public void refreshTiles()
 	{
-		gameBoard = new JPanel(new GridLayout(4,4,0,0));
-		
+		Tile[][] tiles = boardController.getBoard();
 		for(int i = 0; i < 4; i++)
 			for(int j = 0; j < 4; j++)
 			{
-				//Empty Button
-				if(tiles[i][j].getValue()<0)
+				
+				if(boardTiles[i][j].equals(tiles[i][j]))
 				{
-					currentButton = new JButton();
-					currentButton.setPreferredSize(new Dimension(TILE_WIDTH,TILE_HEIGHT));
-					currentButton.addMouseListener(new MouseAdapter() {
-						public void mousePressed(MouseEvent e)
-						{
-							int xClicked = ((int) (e.getComponent().getX() / TILE_WIDTH));
-							int yClicked = ((int) (e.getComponent().getY() / TILE_HEIGHT));
-							boardController.tileClicked(xClicked, yClicked);
-						}
-					});
-					currentButton.setBackground(Color.white);
-					gameBoard.add(currentButton);
-				}else{
-					//Numbered Button
-					currentButton = new JButton(Integer.toString(tiles[i][j].getValue()));
-					currentButton.addMouseListener(new MouseAdapter() {
-						public void mousePressed(MouseEvent e)
-						{
-							//Define Tiles clicked and tell controller about it
-							int xClicked = ((int) (e.getComponent().getX() / TILE_WIDTH));
-							int yClicked = ((int) (e.getComponent().getY() / TILE_HEIGHT));
-							boardController.tileClicked(xClicked, yClicked);
-							
-						}
-					});
-					currentButton.setPreferredSize(new Dimension(TILE_WIDTH,TILE_HEIGHT));
-					currentButton.setBackground(Color.gray);
-					gameBoard.add(currentButton);
+					
 				}
+				else
+				{
+					if(tiles[i][j].getValue()>0)
+					{
+						boardTiles[i][j].setText(Integer.toString(tiles[i][j].getValue()));
+						boardTiles[i][j].setBackground(Color.GRAY);
+					}
+					else
+					{
+						boardTiles[i][j].setText(null);
+						boardTiles[i][j].setBackground(Color.white);
+					}
+				}
+				
 			}
-		return gameBoard;
 	}
 
 	@Override
