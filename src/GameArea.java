@@ -27,16 +27,19 @@ public class GameArea extends JApplet implements MouseListener, Runnable
 	private JPanel controlPanel;
 	private JButton newGameButton;
 	private JButton solveButton;
-	private JLabel moves;
 	private GridBagLayout gLayout;
+	
+	//Board Components
+	private JLabel moves;
 	private static JPanel gameBoard;
 	private static JButton[][] boardTiles;
 	
+	
+	//initiate and populate sub-components
 	public void init()
 	{
-		moves = new JLabel("Moves = " + "0");
+		moves = new JLabel("Moves : " + "0");
 		boardController = new BoardController();
-		printBoard();
 		gameBoard = new JPanel(new GridLayout(4, 4, 0, 0));
 		boardTiles = new JButton[4][4];
 		populateBoard();
@@ -55,17 +58,11 @@ public class GameArea extends JApplet implements MouseListener, Runnable
 		
 	}
 	
-	public void printBoard()
-	{
-		System.out.println(boardController.getBoard().toString());
-	}
-	
 	/**
 	 * Initializes main Pane and adds the control pane together with the board
 	 * */
 	private void initGui()
 	{
-		
 		//Initialize Components
 		gLayout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
@@ -123,8 +120,8 @@ public class GameArea extends JApplet implements MouseListener, Runnable
 					{
 						int xTile = e.getComponent().getX() / TILE_WIDTH;
 						int yTile = e.getComponent().getY() / TILE_HEIGHT;
-						System.out.println("x : " + xTile + " y : " + yTile);
-						boardController.tileClicked(xTile, yTile);
+						System.out.println("x : " + xTile + " y : " + yTile + " - > On Button : " + boardTiles[xTile][yTile].getText());
+						boardController.tileClicked(xTile,yTile);								
 						refreshTiles();
 					}
 				});
@@ -154,8 +151,6 @@ public class GameArea extends JApplet implements MouseListener, Runnable
 	 * Method makes buttons depending on the parameter passed and builds a JPanel 
 	 * component out of the parameter then returns it.
 	 * 
-	 * @param tiles 2-D array with Tile objects
-	 * @return JPanel containing the board representation according to the current board
 	 * */
 	public void refreshTiles()
 	{
