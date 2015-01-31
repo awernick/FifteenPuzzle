@@ -13,11 +13,15 @@ public class BoardController
     public BoardController()
     {
         gameBoard = new Board();
-        scrambleBoard();
-
-        userMoves = 0;
-
         eventListeners = new ArrayList<BoardEventListener>();
+        init();
+
+    }
+
+    public void init()
+    {
+        userMoves = 0;
+        scrambleBoard();
     }
 
     /**
@@ -202,6 +206,23 @@ public class BoardController
      */
     public void solveBoard()
     {
+        Tile[][] tiles = gameBoard.getTiles();
+
+        int counter = 1;
+
+        for(int i = 0; i < tiles.length; i++)
+        {
+            for(int j = 0; j < tiles[0].length; j++)
+            {
+                if(counter == 16)
+                    counter = -1;
+
+                tiles[j][i].setValue(counter++);
+            }
+        }
+
+        notifyBoardChange();
+        notifyBoardSolved();
     }
 
 

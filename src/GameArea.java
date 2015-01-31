@@ -27,8 +27,10 @@ public class GameArea extends JApplet implements BoardEventListener
 	 * */
 	public void init()
 	{
+
 		boardController = new BoardController();
 		boardController.addBoardEventListener(this);
+		boardController.init();
 
 		//Initialize Components
 		gridLayout = new GridLayout();
@@ -39,7 +41,8 @@ public class GameArea extends JApplet implements BoardEventListener
 		newGameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				boardController = new BoardController();
+				boardController.init();
+				refreshTiles();
 			}
 		});
 
@@ -52,7 +55,7 @@ public class GameArea extends JApplet implements BoardEventListener
 				boardController.solveBoard();
 			}
 		});
-		solveButton.setEnabled(false); // Incapacitate for now
+		//solveButton.setEnabled(false); // Incapacitate for now
 
 
 		//Add Buttons to sub-Panel
@@ -97,7 +100,6 @@ public class GameArea extends JApplet implements BoardEventListener
 		}
 
 		refreshTiles();
-
 
 		this.add(gameBoard);
 		this.setSize(240, 320);
