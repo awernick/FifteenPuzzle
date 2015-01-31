@@ -8,7 +8,7 @@ public class BoardController
 {
     private Board gameBoard;
     private int userMoves;
-    private boolean boardChanged;
+    private ArrayList<BoardEventListener> eventListeners;
 
     public BoardController()
     {
@@ -16,7 +16,8 @@ public class BoardController
         scrambleBoard();
 
         userMoves = 0;
-        boardChanged = false;
+
+        eventListeners = new ArrayList<BoardEventListener>();
     }
 
     /**
@@ -96,7 +97,7 @@ public class BoardController
     public void tileClicked( int x, int y )
     {
 
-        TileMovement movement = canMove( x, y);
+        TileMovement movement = canMove(x, y);
 
         if( movement == TileMovement.NULL )
             return;
@@ -118,7 +119,10 @@ public class BoardController
         }
 
         userMoves++;
-        boardChanged = true;
+        notifyBoardChange();
+
+        if(isBoardSolved())
+            notifyBoardSolved();
     }
 
     /**
@@ -198,7 +202,6 @@ public class BoardController
      */
     public void solveBoard()
     {
-
     }
 
 
@@ -229,29 +232,29 @@ public class BoardController
                 numbersTaken.add(num); // Add to the list of numbers taken
             }
         }
-
-        setBoardChanged(true); // Flag the view for an update
     }
 
-    /**
-     * Signal the view to update if the board has changed.
-     *
-     * @return true if the board has changed.
-     */
-    public boolean hasChanged()
+    public void addBoardEventListener(BoardEventListener listener)
     {
-        if(boardChanged)
-            System.out.println("Changed!");
-
-        return boardChanged;
+        eventListeners.add(listener);
     }
 
-    /**
-     * Set if the board has been changed. Usually only used to indicate
-     * that the board view has been updated.
-     */
-    public void setBoardChanged(boolean boardChanged)
-    { this.boardChanged = boardChanged; }
+    private void notifyBoardChange()
+    {
+        for(BoardEventListener listener : eventListeners)
+        {
+            listener.boardChanged();
+        }
+    }
+
+    private void notifyBoardSolved()
+    {
+        for(BoardEventListener listener : eventListeners)
+        {
+            listener.boardSolved();
+        }
+    }
+
 
     /**
      * Get the number of valid user moves in the current board
@@ -268,4 +271,10 @@ public class BoardController
      */
     public Tile[][] getBoard()
     { return gameBoard.getTiles().clone(); }
+}
+
+interface BoardEventListener
+{
+    public void boardChanged();
+    public void boardSolved();
 }
