@@ -1,5 +1,13 @@
+package controller;
+
+import model.Board;
+import model.Tile;
+import model.TileMovement;
+
 import java.util.ArrayList;
 import java.util.Random;
+
+import static model.TileMovement.*;
 
 /**
  * Created by awernick on 1/27/15.
@@ -10,14 +18,16 @@ public class BoardController
     private int userMoves;
     private ArrayList<BoardEventListener> eventListeners;
 
-    public BoardController()
+    public BoardController(int length , int width)
     {
-        gameBoard = new Board();
+        gameBoard = new Board(length, width);
         eventListeners = new ArrayList<BoardEventListener>();
         init();
-
     }
 
+    /**
+     * (Re)Initialize the board
+     */
     public void init()
     {
         userMoves = 0;
@@ -30,7 +40,7 @@ public class BoardController
      * @param x clicked tile's x coordinate
      * @param y clicked tile's y coordinate
      */
-    public void moveTileLeft( int x, int y )
+    private void moveTileLeft( int x, int y )
     {
         swapTile( x, y, x - 1, y );
     }
@@ -41,7 +51,7 @@ public class BoardController
      * @param x clicked tile's x coordinate
      * @param y clicked tile's y coordinate
      */
-    public void moveTileRight( int x, int y )
+    private void moveTileRight( int x, int y )
     {
         swapTile( x, y,  x + 1, y );
     }
@@ -52,7 +62,7 @@ public class BoardController
      * @param x clicked tile's x coordinate
      * @param y clicked tile's y coordinate
      */
-    public void moveTileUp( int x, int y )
+    private void moveTileUp( int x, int y )
     {
         swapTile( x, y, x, y - 1 );
     }
@@ -63,7 +73,7 @@ public class BoardController
      * @param x clicked tile's x coordinate
      * @param y clicked tile's y coordinate
      */
-    public void moveTileDown( int x, int y )
+    private void moveTileDown( int x, int y )
     {
         swapTile( x, y, x, y + 1 );
     }
@@ -103,7 +113,7 @@ public class BoardController
 
         TileMovement movement = canMove(x, y);
 
-        if( movement == TileMovement.NULL )
+        if( movement == NULL )
             return;
 
         switch (movement)
@@ -138,33 +148,33 @@ public class BoardController
      * @return the direction that the tile can be moved to,
      * null otherwise
      */
-    public TileMovement canMove(int x, int y)
+    private TileMovement canMove(int x, int y)
     {
 
         if(x + 1 < 4 && gameBoard.getTile(x + 1, y).getValue() == -1) {
             System.out.println("Move right");
-            return TileMovement.RIGHT;
+            return RIGHT;
         }
 
         else if( x - 1 >= 0 && gameBoard.getTile(x - 1, y).getValue() == -1) {
             System.out.println("Move left");
-            return TileMovement.LEFT;
+            return LEFT;
         }
 
         else if(y + 1 < 4 && gameBoard.getTile(x, y + 1).getValue() == -1) {
             System.out.println("Move down");
-            return TileMovement.DOWN;
+            return DOWN;
         }
 
         else if( y - 1 >= 0 &&  gameBoard.getTile(x, y - 1).getValue() == -1) {
             System.out.println("Move up");
-            return TileMovement.UP;
+            return UP;
         }
 
         else
         {
             System.out.println("Cannot move!");
-            return TileMovement.NULL;
+            return NULL;
         }
     }
 
@@ -187,11 +197,15 @@ public class BoardController
         {
             for(int j = 0; j < 4; j++)
             {
-                if(previousTile == null)
-                    previousTile = tiles[i][j];
 
-                else if(tiles[i][j].getValue() > previousTile.getValue())
-                    previousTile = tiles[i][j];
+                if(previousTile == null)
+                    previousTile = tiles[j][i];
+
+                else if(tiles[j][i].getValue() > previousTile.getValue())
+                    previousTile = tiles[j][i];
+
+                else if(previousTile.getValue() == ((tiles.length * tiles[0].length) - 1) && tiles[j][i].getValue() == -1)
+                    previousTile = tiles[j][i];
 
                 else
                     return false;
@@ -222,7 +236,6 @@ public class BoardController
         }
 
         notifyBoardChange();
-        notifyBoardSolved();
     }
 
 
@@ -235,7 +248,7 @@ public class BoardController
         Tile[][] tiles = gameBoard.getTiles();
         Random generator = new Random();
 
-        ArrayList<Integer> numbersTaken = new ArrayList<Integer>(); // List of the numbers that have already been set in the Tile's
+        ArrayList<Integer> numbersTaken = new ArrayList<Integer>(); // List of the numbers that have already been set in the model.Tile's
 
         int num; // Temporary variable to store random numbers
 
@@ -255,19 +268,38 @@ public class BoardController
         }
     }
 
+    /**
+     * Register a listener for board changes such as moved tiles
+     * or board being solved
+     *
+     * @param listener event handler
+     */
+
     public void addBoardEventListener(BoardEventListener listener)
     {
         eventListeners.add(listener);
     }
 
+    /**
+     * Notify registered listeners of a board change.
+     * Triggered when a tile is moved or when it has
+     * been reinitialized.
+     */
     private void notifyBoardChange()
     {
         for(BoardEventListener listener : eventListeners)
         {
             listener.boardChanged();
+
+            if(isBoardSolved())
+                listener.boardSolved();
         }
     }
 
+    /**
+     * Notify registered listeners that the current board
+     * configuration has been solved.
+     */
     private void notifyBoardSolved()
     {
         for(BoardEventListener listener : eventListeners)
@@ -291,11 +323,19 @@ public class BoardController
      * @return gameboard's tiles.
      */
     public Tile[][] getBoard()
-    { return gameBoard.getTiles().clone(); }
-}
+    {
+        Tile[][] tiles = gameBoard.getTiles();
 
-interface BoardEventListener
-{
-    public void boardChanged();
-    public void boardSolved();
+        Tile[][] copy = new Tile[tiles.length][tiles[0].length];
+
+        for(int i = 0; i < tiles.length; i++)
+        {
+            for(int j = 0; j < tiles[0].length; j++)
+            {
+                copy[i][j] = new Tile(tiles[i][j].getValue());
+            }
+        }
+
+        return copy;
+    }
 }

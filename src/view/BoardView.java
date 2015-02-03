@@ -1,3 +1,8 @@
+package view;
+
+import controller.BoardController;
+import controller.BoardEventListener;
+import model.Tile;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -8,36 +13,31 @@ import javax.swing.*;
 /**
  * Created by awernick on 1/27/15.
  */
-public class GameArea extends JApplet implements BoardEventListener
+public class BoardView extends JApplet implements BoardEventListener
 {
-	// Game Components Instantiation
+	// Will only be changing these three variables in game.
+	// No need to make the rest global.
 	private BoardController boardController;
-
-	// Instantiate GUI Components and Layout Managers
-	private JPanel controlPanel;
-	private JButton newGameButton;
-	private JButton solveButton;
-	private GridLayout gridLayout;
 	private JButton[][] gridButtons;
-	private JPanel gameBoard;
 	private JLabel userMovesLabel;
 
 	/**
-	 * Initializes main Pane and adds the control pane together with the board
+	 * Initialize the applet and add necessary components
 	 * */
 	public void init()
 	{
 
-		boardController = new BoardController();
+		//Initialize our board controller (4 x 4) and register event listener
+		boardController = new BoardController(4, 4);
 		boardController.addBoardEventListener(this);
 		boardController.init();
 
 		//Initialize Components
-		gridLayout = new GridLayout();
-		controlPanel = new JPanel();
+		GridLayout gridLayout = new GridLayout();
+		JPanel controlPanel = new JPanel();
 
 		// "New Game" Button
-		newGameButton = new JButton("New Game");
+		JButton newGameButton = new JButton("New Game");
 		newGameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -46,9 +46,8 @@ public class GameArea extends JApplet implements BoardEventListener
 			}
 		});
 
-
 		// "Solve" Button
-		solveButton = new JButton("Solve");
+		JButton solveButton = new JButton("Solve");
 		solveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -66,17 +65,20 @@ public class GameArea extends JApplet implements BoardEventListener
 		this.add(controlPanel, BorderLayout.NORTH);
 
 
-		//Add User Moves Label
+		// Add User Moves Label
 		userMovesLabel = new JLabel("Moves: " + boardController.getUserMoves());
 		userMovesLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
+		//Separate UserMovesLabel from Button Grid
 		JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
 		JPanel center = new JPanel(new BorderLayout()); // Create JPanel to center label
 		center.add(separator, BorderLayout.NORTH);
 		center.add(userMovesLabel, BorderLayout.CENTER);
 		this.add(center, BorderLayout.SOUTH);
 
-		gameBoard = new JPanel(new GridLayout(4,4,0,0));
+
+		// Initialize button grid
+		JPanel gameBoard = new JPanel(new GridLayout(4,4,0,0));
 
 		// Generate Game Buttons
 		gridButtons = new JButton[4][4];
@@ -84,30 +86,34 @@ public class GameArea extends JApplet implements BoardEventListener
 		{
 			for(int j = 0; j < gridButtons[0].length; j++)
 			{
-				gridButtons[i][j] = new JButton();
-				gridButtons[i][j].addMouseListener(new MouseAdapter()
+				gridButtons[j][i] = new JButton();
+				gridButtons[j][i].addMouseListener(new MouseAdapter()
 				{
 					public void mousePressed(MouseEvent e)
 					{
+						// Get X, Y from click event relative to button size
 						int xClicked = ((int) (e.getComponent().getX() / e.getComponent().getWidth()));
 						int yClicked = ((int) (e.getComponent().getY() / e.getComponent().getHeight()));
 						boardController.tileClicked(xClicked, yClicked);
 					}
 				});
 
-				gameBoard.add(gridButtons[i][j]);
+				gameBoard.add(gridButtons[j][i]);
 			}
 		}
 
+		// Update board
 		refreshTiles();
 
+		// Start Applet
 		this.add(gameBoard);
 		this.setSize(240, 320);
 	}
 
 
 	/**
-	 * Updates game buttons based on user movements.
+	 * Refresh JButton grid relative to board values. Only triggered
+	 * on BoardEvent Changed.
 	 */
 	private void refreshTiles()
 	{
@@ -121,23 +127,25 @@ public class GameArea extends JApplet implements BoardEventListener
 			for(int j = 0; j < tiles[0].length; j++)
 			{
 				//Empty Button
-				if (tiles[i][j].getValue() < 0)
-				{
-					gridButtons[j][i].setText("");
-					gridButtons[j][i].setBackground(Color.white);
-					gridButtons[j][i].setEnabled(false);
+				if (tiles[i][j].getValue() < 0) {
+					gridButtons[i][j].setText("");
+					gridButtons[i][j].setBackground(Color.white);
+					gridButtons[i][j].setEnabled(false);
 				}
 
 				else
 				{
-					gridButtons[j][i].setText(tiles[i][j].getValue() + "");
-					gridButtons[j][i].setBackground(Color.gray);
-					gridButtons[j][i].setEnabled(true);
+					gridButtons[i][j].setText(tiles[i][j].getValue() + "");
+					gridButtons[i][j].setBackground(Color.gray);
+					gridButtons[i][j].setEnabled(true);
 				}
 			}
 		}
 	}
 
+	/**
+	 * Handle BoardEvent Changed
+	 */
 	@Override
 	public void boardChanged()
 	{
@@ -145,6 +153,9 @@ public class GameArea extends JApplet implements BoardEventListener
 		userMovesLabel.setText("Moves: " + boardController.getUserMoves());
 	}
 
+	/**
+	 * Handle BoardEvent solved
+	 */
 	@Override
 	public void boardSolved()
 	{

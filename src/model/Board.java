@@ -1,13 +1,20 @@
+package model;
+
 /**
  * Created by awernick on 1/27/15.
  */
 public class Board
 {
     private Tile[][] tiles;
+    private int length;
+    private int width;
 
-    public Board()
+    public Board(int length, int width)
     {
-        tiles = new Tile[4][4];
+        this.length = length;
+        this.width = width;
+
+        tiles = new Tile[width][length];
 
         for(int i = 0; i < tiles.length; i++)
             for (int j = 0; j < tiles[0].length; j++)
@@ -37,8 +44,28 @@ public class Board
         return tiles;
     }
 
+
+    /**
+     * Get board's length
+     *
+     * @return length of board
+     */
+    public int getLength()
+    {
+        return length;
+    }
+
+    /**
+     * Get board's width
+     *
+     * @return width of board
+     */
+    public int getWidth()
+    {
+        return width;
+    }
 //
-//  public void setTiles(Tile[][] tiles)
+//  public void setTiles(model.Tile[][] tiles)
 //  {
 //      this.tiles = tiles;
 //  }

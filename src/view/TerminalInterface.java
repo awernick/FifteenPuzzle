@@ -1,3 +1,8 @@
+package view;
+
+import controller.BoardController;
+import model.Tile;
+
 import java.util.Scanner;
 
 /**
@@ -10,7 +15,7 @@ public class TerminalInterface
 
     public TerminalInterface()
     {
-        boardController= new BoardController();
+        boardController = new BoardController(4, 4);
         reader = new Scanner(System.in);
 
         startGame();
