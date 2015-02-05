@@ -1,19 +1,30 @@
 package model;
 
 /**
- * Created by awernick on 1/27/15.
+ * Tile is a model class that represents a block in the
+ * FifteenPuzzle board.
+ *
+ * Each Tile can only hold one value at a given time.
+ *
+ * @author Alan Wernick
  */
 public class Tile
 {
-    private int value;
+    private int value; // Hold a number from -1 to 15
 
+
+    /**
+     * Constructs a Tile object that will hold the given value.
+     *
+     * @param value value for the FifteenPuzzle game
+     */
     public Tile(int value)
     {
         this.value = value;
     }
 
     /**
-     * Fetch tile's value
+     * Returns the tile's value
      *
      * @return tile's value
      */
@@ -23,7 +34,7 @@ public class Tile
     }
 
     /**
-     * Set tile's value
+     * Sets the tile's value
      *
      * @param value tile's desired value
      */

@@ -10,7 +10,16 @@ import java.util.Random;
 import static model.TileMovement.*;
 
 /**
- * Created by awernick on 1/27/15.
+ * Controller class that manages the Board model and
+ * notifies the view on the changes that have taken place.
+ *
+ * This class controls all the logic of the FifteenPuzzle game
+ * and coordinates the model and the view through the BoardEventListener
+ * interface. By notifying different state changes in the model,
+ * the view is able update accordingly and efficiently without wasting
+ * time performing exhaustive checks.
+ *
+ * @author Alan Wernick
  */
 public class BoardController
 {
@@ -18,15 +27,17 @@ public class BoardController
     private int userMoves;
     private ArrayList<BoardEventListener> eventListeners;
 
-    public BoardController(int length , int width)
+
+    public BoardController()
     {
-        gameBoard = new Board(length, width);
+        gameBoard = new Board();
         eventListeners = new ArrayList<BoardEventListener>();
         init();
     }
 
     /**
-     * (Re)Initialize the board
+     * (Re)Initializes the board and
+     * clears the previous game's values.
      */
     public void init()
     {
@@ -57,7 +68,7 @@ public class BoardController
     }
 
     /**
-     * Slide a tile to the up
+     * Slide a tile up
      *
      * @param x clicked tile's x coordinate
      * @param y clicked tile's y coordinate
@@ -68,7 +79,7 @@ public class BoardController
     }
 
     /**
-     * Slide a tile to the down
+     * Slide a tile down
      *
      * @param x clicked tile's x coordinate
      * @param y clicked tile's y coordinate
@@ -216,7 +227,7 @@ public class BoardController
     }
 
     /**
-     * Solve the current board.
+     * Solve the current board configuration.
      */
     public void solveBoard()
     {
@@ -310,17 +321,18 @@ public class BoardController
 
 
     /**
-     * Get the number of valid user moves in the current board
+     * Returns the number of valid user moves in the current board
      *
      * @return number of user moves
      */
     public int getUserMoves()
     { return userMoves; }
 
+
     /**
-     * Return the current board's tiles.
+     * Return the current board's Tile objects.
      *
-     * @return gameboard's tiles.
+     * @return gameboard's Tiles.
      */
     public Tile[][] getBoard()
     {

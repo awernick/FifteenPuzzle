@@ -1,18 +1,23 @@
 package model;
 
 /**
- * Created by awernick on 1/27/15.
+ * Board is a model class that represents the FifteenPuzzle
+ * board. A Board object encapsulate a set of 16 Tile objects
+ * with unique values ranging from -1 to 15.
+ *
+ * @author Alan Wernick
  */
 public class Board
 {
-    private Tile[][] tiles;
-    private int length;
-    private int width;
+    private Tile[][] tiles; // Tile objects for the puzzle
+    private int length; // Board length
+    private int width; // Board width
 
-    public Board(int length, int width)
+    /** Constructs a Board with a default grid of 16 Tile objects */
+    public Board()
     {
-        this.length = length;
-        this.width = width;
+        this.length = 4;
+        this.width = 4;
 
         tiles = new Tile[width][length];
 
@@ -22,12 +27,13 @@ public class Board
     }
 
     /**
-     * Gets the tile at the specified x and y coordinates
+     * Returns the Tile object at the specified x and y coordinates.
      *
-     * @param x desired tile's x coordinate
-     * @param y desired tile's y coordinate
+     * @param x desired Tile's x coordinate
+     * @param y desired Tile's y coordinate
      *
      * @return desired tile
+     * @see model.Tile
      */
     public Tile getTile(int x, int y)
     {
@@ -35,7 +41,7 @@ public class Board
     }
 
     /**
-     * Fetch 4x4 tile-based game board
+     * Returns a 4x4 Tile array
      *
      * @return tile-based board
      */
@@ -46,7 +52,7 @@ public class Board
 
 
     /**
-     * Get board's length
+     * Returns board's length
      *
      * @return length of board
      */
@@ -56,7 +62,7 @@ public class Board
     }
 
     /**
-     * Get board's width
+     * Returns board's width
      *
      * @return width of board
      */
@@ -64,9 +70,4 @@ public class Board
     {
         return width;
     }
-//
-//  public void setTiles(model.Tile[][] tiles)
-//  {
-//      this.tiles = tiles;
-//  }
 }

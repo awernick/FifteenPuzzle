@@ -1,7 +1,10 @@
 package model;
 
 /**
- * Created by awernick on 1/27/15.
+ * Enumeration class representing the different possible directions
+ * a Tile can move in the game board.
+ *
+ * @author Alan Wernick
  */
 public enum TileMovement
 {

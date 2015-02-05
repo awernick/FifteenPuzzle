@@ -4,22 +4,33 @@ import controller.BoardController;
 import controller.BoardEventListener;
 import model.Tile;
 
-import java.awt.*;
-import java.awt.event.*;
-
-
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
- * Created by awernick on 1/27/15.
+ * View component for the FifteenPuzzle MVC design.
+ *
+ * The class extends JApplet in order to draw a GUI
+ * for the game.
+ *
+ * Also, this class implements the BoardEventListener
+ * to listen to events fired by the
+ * BoardController when the Board model's state changes.
+ *
+ * @author Alan Wernick
  */
 public class BoardView extends JApplet implements BoardEventListener
 {
 	// Will only be changing these three variables in game.
 	// No need to make the rest global.
-	private BoardController boardController;
-	private JButton[][] gridButtons;
-	private JLabel userMovesLabel;
+
+	private BoardController boardController; // Controls all the game logic
+	private JButton[][] gridButtons; // Buttons that trigger BoardEvents
+	private JLabel userMovesLabel; // Displays number of moves performed by user
 
 	/**
 	 * Initialize the applet and add necessary components
@@ -27,8 +38,8 @@ public class BoardView extends JApplet implements BoardEventListener
 	public void init()
 	{
 
-		//Initialize our board controller (4 x 4) and register event listener
-		boardController = new BoardController(4, 4);
+		//Initialize our board controller and register the instance as a BoardEvent listener
+		boardController = new BoardController();
 		boardController.addBoardEventListener(this);
 		boardController.init();
 
@@ -112,8 +123,7 @@ public class BoardView extends JApplet implements BoardEventListener
 
 
 	/**
-	 * Refresh JButton grid relative to board values. Only triggered
-	 * on BoardEvent Changed.
+	 * Refreshes the JButton grid relative to the board's current state.
 	 */
 	private void refreshTiles()
 	{
