@@ -1,0 +1,41 @@
+<!-- Embbeded JApplet --> 
+<html>
+  <style>
+
+    body { background-color: #EEEEEE; }
+
+    h1 { text-align: center; }
+
+    .centered {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .description {
+      /* vertical-align: middle; */
+      margin-left: auto;
+      margin-right: auto;
+      width: 50%;
+      text-align: center;
+      padding-top: 20px;
+    }
+}
+
+  </style>
+  <head>
+    <title> Fifteen Puzzle </title>
+  </head>
+  <body>
+    <h1> Fifteen Puzzle by Alan Wernick </h1>
+    <div class="description">
+      <h3> Description </h3>
+      <p> Java Implementation of the famous FifteenPuzzle </p>
+    </div>
+    <applet class="centered" code = 'view.BoardView' 
+      archive = 'FifteenPuzzle.jar', 
+      width = 240, 
+      height = 320 />
+  </body>
+</html>
